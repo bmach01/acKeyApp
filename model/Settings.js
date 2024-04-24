@@ -1,33 +1,37 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Settings = {
-    SESSION_LIMIT: "session_limit",
-    DEFAULT_SESSION_LIMIT: "default_session_limit",
-    LAST_LOGIN_STAMP: "last_login_stamp",
-    ACCOUNT_EMAIL: "account_email",
+class Settings {
+    constructor() {
+        this.loadAllSettings();
+    }
 
-    sessionLimit: null,
-    defaultSessionLimit: null,
-    lastLoginStamp: null,
-    accountEmail: null,
+    static SESSION_LIMIT = "session_limit";
+    static LAST_LOGIN_STAMP = "last_login_stamp";
+    static ACCOUNT_EMAIL = "account_email";
 
-    saveSettings: async (key, value) => {
+    static DefaultLimit = "5H";
+
+    sessionLimit = "";
+    lastLoginStamp = "";
+    accountEmail = "";
+
+    saveSettings = async (key, value) => {
         try {
             await AsyncStorage.setItem(key, value);
         } catch (error) {
             console.error('Error saving data:', error);
-            return null;
         }
-    },
+    }
     
-    loadAllSettings: async () => {
+    loadAllSettings = async () => {
         try {
-            sessionLimit = await AsyncStorage.getItem(SESSION_LIMIT);
-            defaultSessionLimit = await AsyncStorage.getItem(DEFAULT_SESSION_LIMIT);
-            lastLoginStamp = await AsyncStorage.getItem(LAST_LOGIN_STAMP);
-            accountEmail = await AsyncStorage.getItem(ACCOUNT_EMAIL);
+            sessionLimit = await AsyncStorage.getItem(Settings.SESSION_LIMIT);
+            lastLoginStamp = await AsyncStorage.getItem(Settings.LAST_LOGIN_STAMP);
+            accountEmail = await AsyncStorage.getItem(Settings.ACCOUNT_EMAIL);
         } catch (error) {
             console.error('Error retrieving data:', error);
         }
     }
 }
+
+export default Settings;

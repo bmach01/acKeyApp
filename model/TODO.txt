@@ -10,7 +10,6 @@ TODO:
     >"handle login"
 
 >handle sessions
-    >"default session limit"
     >save last login time
     >log out after local session expires
 

@@ -14,7 +14,7 @@ function SettingsScreen() {
                 
             </View>
             <View style={styles.menu}>
-                <TouchableOpacity onPress={console.log("Button1pressed")} style={styles.menu.button}>
+                <TouchableOpacity onPress={console.log()} style={styles.menu.button}>
                     <Text style={styles.menu.button.text}>Log Out</Text> {/*TODO: Change it to icon later */}
                 </TouchableOpacity>
             </View>
