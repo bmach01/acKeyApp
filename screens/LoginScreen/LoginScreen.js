@@ -5,10 +5,13 @@ import {
     SafeAreaView,
     StyleSheet,
     View,
-    TouchableHighlight
+    TouchableHighlight,
+    Pressable
 } from 'react-native'
+import * as COLORS from '../../assets/colors'
 
-// TODO: Fix the buttons positioning, make password appear as stars,
+
+// TODO: Fix the buttons positioning,
 //  add confirm button that sends the information and if it returns
 //   a key start new screen
 function LoginScreen() {
@@ -52,6 +55,7 @@ function LoginScreen() {
                     style={styles.credentials.input}
                     onChangeText={t => setLogin(t)}
                     value={login}
+                    
                     placeholder="Login"
                 />
                 <TextInput
@@ -59,18 +63,23 @@ function LoginScreen() {
                     onChangeText={t => setPassword(t)}
                     value={password}
                     placeholder="Password"
-                    editable={false}
+                    keyboardType="numeric"
+                    // editable={false}
+                    secureTextEntry
                 />
+                <Pressable style={[styles.credentials.input, styles.buttons.login, ]}>
+                    <Text >Login</Text>
+                </Pressable>
             </View>
-            <View style={styles.keyboard.container}>
+            {/* <View style={styles.keyboard.container}>
                 <RandomButtons/>
-            </View>
-            <TouchableHighlight
+            </View> */}
+            {/* <TouchableHighlight
                     style={styles.keyboard.button}
                     onPress={trimPassword}
                 >
                     <Text>{"<"}</Text>
-                </TouchableHighlight>
+                </TouchableHighlight> */}
         </SafeAreaView>
     );
 }
@@ -89,9 +98,19 @@ const styles = StyleSheet.create({
             margin: 100,
         },
         input: {
-            height: "100%",
+            
+            height: 50,
             margin: 10,
             borderWidth: 1,
+            padding:10,
+            borderRadius:100
+        }
+    },
+    buttons:{
+        login:{
+            alignItems:"center",
+            justifyContent:"center",
+            backgroundColor: COLORS.BUTTONS_COLOR,
         }
     },
 
