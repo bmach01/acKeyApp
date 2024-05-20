@@ -28,12 +28,11 @@ function LoginScreen() {
             }
 
             if (key != null) {
-                navigation.navigate('KeyScreen');
+                navigation.navigate('KeyScreen', {key: key});
             }
             else {
                 // TODO: handle wrong credentials here
             }
-            console.log("attemptLogin3", key);
         }
         catch (error) {
             console.log(error);

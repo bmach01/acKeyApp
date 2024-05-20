@@ -16,8 +16,7 @@ export async function sendLogin(login, password) {
       if (!response.ok) {
         return null;
       }
-      const key = response.headers.get('Authenticator');
-      console.log("Got key: ", key);
-      return key;
+      
+      return response.headers.get('Authenticator');
     });
 }

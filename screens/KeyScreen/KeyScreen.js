@@ -10,7 +10,7 @@ import Barcode from "react-native-barcode-builder";
 
 function KeyScreen(props) {
     
-    let key = !props.keyCode ? 'DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_D' : props.keyCode;
+    let key = !props.route.params.key ? 'DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_D' : props.route.params.key;
 
     return (
         <SafeAreaView style={styles.container}>
