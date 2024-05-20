@@ -13,10 +13,10 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Key">
-        <Stack.Screen name="Login" component={LoginScreen}/>
-        <Stack.Screen name="Settings" component={SettingsScreen}/>
-        <Stack.Screen name="Key" component={KeyScreen}/>
+      <Stack.Navigator initialRouteName="LoginScreen">
+        <Stack.Screen name="LoginScreen" component={LoginScreen}/>
+        <Stack.Screen name="SettingsScreen" component={SettingsScreen}/>
+        <Stack.Screen name="KeyScreen" component={KeyScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
