@@ -5,47 +5,41 @@ import {
     SafeAreaView,
     StyleSheet,
     View,
-    TouchableHighlight,
     Pressable
 } from 'react-native'
+import { sendLogin } from '../../model/Connections'
 import * as COLORS from '../../assets/colors'
+import { useNavigation } from '@react-navigation/native';
 
 
-// TODO: Fix the buttons positioning,
-//  add confirm button that sends the information and if it returns
-//   a key start new screen
 function LoginScreen() {
     const [login, setLogin] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const navigation = useNavigation();
 
-    function buttonPressed(v) {
-        setPassword(password);
-        console.log(password)
-    }
+    async function attemptLogin() {
+        try {
+            const key = await sendLogin(login, password);
 
-    function trimPassword() {
-        if (password.length >= 1)
-            setPassword(password.slice(0, -1));
-    }
+            // DEBUG ONLY!!!
+            if (!login && !password) {
+                navigation.navigate('KeyScreen');
+                return;
+            }
 
-    function RandomButtons() {
-        const order = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-        const elementContainer = [];
-    
-        while (order.length > 0) {
-            const num = order.pop(Math.floor(Math.random() * (order.length)));
-    
-            elementContainer.push(
-                <TouchableHighlight
-                    key={num}
-                    onPress={() => buttonPressed.bind(num)}
-                    style={styles.keyboard.button}
-                >
-                    <Text>{num}</Text>
-                </TouchableHighlight>
-            )
+            if (key != null) {
+                navigation.navigate('KeyScreen');
+            }
+            else {
+                // TODO: handle wrong credentials here
+            }
+            console.log("attemptLogin3", key);
         }
-        return elementContainer;
+        catch (error) {
+            console.log(error);
+            // TODO: handle error here?
+        }
+        
     }
 
     return (
@@ -67,19 +61,13 @@ function LoginScreen() {
                     // editable={false}
                     secureTextEntry
                 />
-                <Pressable style={[styles.credentials.input, styles.buttons.login, ]}>
+                <Pressable 
+                    style={[styles.credentials.input, styles.buttons.login]}
+                    onPress={attemptLogin}
+                >
                     <Text >Login</Text>
                 </Pressable>
             </View>
-            {/* <View style={styles.keyboard.container}>
-                <RandomButtons/>
-            </View> */}
-            {/* <TouchableHighlight
-                    style={styles.keyboard.button}
-                    onPress={trimPassword}
-                >
-                    <Text>{"<"}</Text>
-                </TouchableHighlight> */}
         </SafeAreaView>
     );
 }
@@ -88,7 +76,7 @@ const styles = StyleSheet.create({
     container: {
       alignItems: 'center',
       flex:1,
-      padding: '5%'
+      padding: '5%',
     },
   
     credentials: {
@@ -102,32 +90,19 @@ const styles = StyleSheet.create({
             height: 50,
             margin: 10,
             borderWidth: 1,
-            padding:10,
-            borderRadius:100
-        }
+            padding: 10,
+            borderRadius: 100,
+            color: "black"
+    }
     },
     buttons:{
         login:{
             alignItems:"center",
             justifyContent:"center",
             backgroundColor: COLORS.BUTTONS_COLOR,
+            color: "black"
         }
     },
-
-    keyboard: {
-        container: {
-            width: 360,
-            height: 480,
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center"
-        },
-        button: {
-            width: 120,
-            height: 120,
-            backgroundColor: "grey",
-        }
-    }
   });
   
 
