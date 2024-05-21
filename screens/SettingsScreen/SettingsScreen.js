@@ -6,22 +6,20 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native"
-import NumericInput from 'react-native-numeric-input'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import NumericInput from 'react-native-numeric-input';
 import * as KEYS from '../../assets/storageKeys';
+import Storage from '../../model/Storage';
 
 function SettingsScreen() {
+  const storage = new Storage();
+  let initV = parseInt(storage.getSetting(KEYS.SESSION_LIMIT));
+  let save;
 
-  const handleIncrement = async (v) => {
+  const handleIncrement = (v) => {
     clearTimeout(save);
-    const save = setTimeout((v) => {
-      try {
-        AsyncStorage.setItem(KEYS.SESSION_LIMIT, v)
-      }
-      catch(error) {
-        console.log("Session limit save error: ", error);
-      }
-    }, 2000);
+    save = setTimeout(() => {
+      storage.saveSettings(KEYS.SESSION_LIMIT, v.toString());
+    }, 500);
   }
 
   return (
@@ -31,9 +29,12 @@ function SettingsScreen() {
           <Text style={styles.settings.section.title}>Session limit</Text>
           <NumericInput 
             valueType='integer'
-            initValue={AsyncStorage.getItem(KEYS.SESSION_LIMIT) * 1}
+            initValue={initV}
             onChange={
-              value => handleIncrement(value)
+              value => {
+                console.log(value)
+                handleIncrement(value)
+              }
             }
             minValue={5}
             maxValue={60}

@@ -34,7 +34,7 @@ function KeyScreen(props) {
                     <Barcode 
                     value={key}
                     format="CODE128" 
-                    width={0.47} //TODO: Change it so it fits neatly
+                    width={0.912}
                     height={150}
                     />
                 </Text>
