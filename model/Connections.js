@@ -2,8 +2,9 @@ import { getUniqueId } from 'react-native-device-info';
 import Settings from './Settings';
 
 export async function sendLogin(login, password) {
+  const settings = await Settings.getSettings();
   const imei = (await getUniqueId()).toString();
-  const session = "";
+  const session = settings.sessionLimit + settings.lastLoginStamp;
 
   const controller = new AbortController();
   setTimeout(() => controller.abort(), 2000);

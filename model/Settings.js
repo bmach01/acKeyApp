@@ -4,6 +4,7 @@ class Settings {
     constructor() {
         this.loadAllSettings();
     }
+    static #settingsSession = null;
 
     static SESSION_LIMIT = "session_limit";
     static LAST_LOGIN_STAMP = "last_login_stamp";
@@ -31,6 +32,13 @@ class Settings {
         } catch (error) {
             console.error('Error retrieving data:', error);
         }
+    }
+
+    getSettings = async () => {
+        if (!this.settingsSession) {
+            this.settingsSession = new Settings();
+        }
+        return this.settingsSession;
     }
 }
 

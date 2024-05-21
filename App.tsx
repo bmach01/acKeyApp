@@ -13,9 +13,9 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginScreen">
-        <Stack.Screen name="LoginScreen" component={LoginScreen}/>
+        <Stack.Screen name="LoginScreen" options={{headerBackVisible:false}} component={LoginScreen}/>
         <Stack.Screen name="SettingsScreen" component={SettingsScreen}/>
-        <Stack.Screen name="KeyScreen" component={KeyScreen}/>
+        <Stack.Screen name="KeyScreen" options={{headerBackVisible:false}} component={KeyScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
