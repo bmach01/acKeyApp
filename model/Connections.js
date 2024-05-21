@@ -1,15 +1,18 @@
 import { getUniqueId } from 'react-native-device-info';
-import Settings from './Settings';
+import * as KEYS from '../assets/storageKeys';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function sendLogin(login, password) {
-  const settings = await Settings.getSettings();
   const imei = (await getUniqueId()).toString();
-  const session = settings.sessionLimit + settings.lastLoginStamp;
+
+  const sessionLimit = await AsyncStorage.getItem(KEYS.SESSION_LIMIT) * 1000 * 60;
+  const lastLoginStamp = await AsyncStorage.getItem(KEYS.LAST_LOGIN_STAMP) * 1
+  const session = sessionLimit + lastLoginStamp;
 
   const controller = new AbortController();
   setTimeout(() => controller.abort(), 2000);
 
-  console.log(`try with: ${login}:${password}:${imei}`);
+  console.log(`try with: ${login}:${password}:${imei}:${session}`);
 
   return fetch('http://10.0.2.2:8080/user/login', {
       signal: controller.signal,

@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 
 function KeyScreen(props) {
     
-    let key = !props.route.params.key ? 'DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMYKEY_D' : props.route.params.key;
+    let key = !props.route.params.key ? 'DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMY' : props.route.params.key;
     const navigation = useNavigation();
 
     const logout = () => {

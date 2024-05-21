@@ -9,8 +9,9 @@ import {
 } from 'react-native'
 import { sendLogin } from '../../model/Connections'
 import * as COLORS from '../../assets/colors'
+import * as KEYS from '../../assets/storageKeys'
 import { useNavigation } from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function LoginScreen() {
     const [login, setLogin] = React.useState("");
@@ -28,6 +29,7 @@ function LoginScreen() {
             const key = await sendLogin(login, password);
 
             if (key != null) {
+                AsyncStorage.setItem(KEYS.LAST_LOGIN_STAMP, Date.now().toString());
                 navigation.navigate('KeyScreen', {key: key});
             }
             else {
