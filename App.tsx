@@ -1,6 +1,5 @@
 import React from 'react'
 import KeyScreen from './screens/KeyScreen/KeyScreen';
-import Settings from './model/Settings';
 import LoginScreen from './screens/LoginScreen/LoginScreen';
 import { NavigationContainer } from '@react-navigation/native'
 import SettingsScreen from './screens/SettingsScreen/SettingsScreen';

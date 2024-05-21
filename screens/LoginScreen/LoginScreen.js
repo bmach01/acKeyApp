@@ -19,13 +19,13 @@ function LoginScreen() {
 
     async function attemptLogin() {
         try {
-            const key = await sendLogin(login, password);
-
             // DEBUG ONLY!!!
             if (!login && !password) {
-                navigation.navigate('KeyScreen');
+                console.log("debug login");
+                navigation.navigate('KeyScreen', {key: null});
                 return;
             }
+            const key = await sendLogin(login, password);
 
             if (key != null) {
                 navigation.navigate('KeyScreen', {key: key});
@@ -36,7 +36,7 @@ function LoginScreen() {
         }
         catch (error) {
             console.log(error);
-            // TODO: handle error here?
+            // TODO: handle unable to connect to the server
         }
         
     }
