@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Text,
     View,
@@ -7,8 +7,8 @@ import {
     TouchableOpacity
 } from 'react-native'
 import Barcode from 'react-native-barcode-builder';
-import { sendLogout } from '../model/Connections';
 import Storage from '../model/Storage';
+import { logout } from '../model/Shared';
 
 const KeyScreen = ({navigation}) => {
     
@@ -16,38 +16,23 @@ const KeyScreen = ({navigation}) => {
     // for debug
     const key = storage.getSetting(Storage.keys.KEY) === '' ? 'DUMMY_KEY_DUMMY_KEY_DUMMY_KEY' : storage.getSetting(Storage.keys.KEY);
 
-    const logout = async () => {
-
-        // !!!DEBUG ONLY!!!
-        if (!storage.login && !storage.password) {
-            console.log('DEBUG LOGOUT');
-            storage.saveSetting(Storage.keys.SESSION, 0);
-            navigation.navigate('LoginScreen');
-            return;
-        }
-
-
-        try {
-            const success = await sendLogout(storage.login, storage.password, storage.imei);
-
-            if (success) {
-                storage.saveSetting(Storage.keys.SESSION, 0);
-                storage.saveSetting(Storage.keys.KEY, '');
-                navigation.navigate('LoginScreen');
-            }
-            else {
-                console.log('logout failed!');
-            }
-        }
-        catch(error) {
-            console.log(`logout error: ${error}`);
-        }
-
+    const handleLogout = async () => {
+        await logout(navigation, storage);
     }
 
     const goToSettings = () => {
         navigation.navigate('SettingsScreen');
     }
+
+    useEffect(() => {
+
+        // Session expires
+        const timeToGo = storage.getSetting(Storage.keys.SESSION) - Date.now();
+        console.log(timeToGo);
+        setTimeout(async () => {
+            await logout(navigation, storage, false);
+        }, timeToGo);
+    });
 
     return (
         <SafeAreaView style={styles.container}>
@@ -63,7 +48,7 @@ const KeyScreen = ({navigation}) => {
                 <Text style={styles.barcode.key}>{key}</Text>
             </View>
             <View style={styles.menu}>
-                <TouchableOpacity onPress={logout} style={styles.menu.button}>
+                <TouchableOpacity onPress={handleLogout} style={styles.menu.button}>
                     <Text>Logout</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={goToSettings} style={styles.menu.button}>

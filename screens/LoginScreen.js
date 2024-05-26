@@ -28,8 +28,8 @@ const LoginScreen = ({ navigation }) => {
             // Success
             if (key != null) {
                 await storage.saveSetting(Storage.keys.KEY, key);
-                storage.login = login;
-                storage.password = password;
+                storage.saveSetting(Storage.keys.LOGIN, login);
+                storage.saveSetting(Storage.keys.PASSWORD, password);
                 navigation.navigate('KeyScreen');
             }
             else {

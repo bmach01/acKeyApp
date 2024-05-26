@@ -4,29 +4,29 @@ export default class Storage {
     static keys = {
         KEY: '@key',
         LIMIT: '@limit',
-        SESSION: '@session'
+        SESSION: '@session',
+        PASSWORD: '@password',
+        LOGIN: '@login',
     };
 
     static #instance = null;
     static #initialized = false;
 
-    // Session bound (temporary)
-    login = '';
-    password = '';
-    imei = '';
-
     #persistent = new Map([
         [Storage.keys.KEY, ''],
         [Storage.keys.LIMIT, 5* 60 * 1000],
-        [Storage.keys.SESSION, 0]
+        [Storage.keys.SESSION, 0],
+        [Storage.keys.LOGIN, ""],
+        [Storage.keys.PASSWORD, ""]
     ]);
 
+    imei = "";
 
     static getInstance = () => {
-        if (!this.instance) {
-            this.instance = new Storage();
+        if (!this.#instance) {
+            this.#instance = new Storage();
         }
-        return this.instance;
+        return this.#instance;
     }
 
     init = async () => {
@@ -65,7 +65,7 @@ export default class Storage {
             const values = await Promise.all(keys.map(async (key) => {
               try {
                 const v = await AsyncStorage.getItem(key);
-                if (typeof v !== 'undefined' && v !== '') {
+                if (typeof v !== 'undefined' && v !== '' && v != null) {
                   this.#persistent.set(key, v);
                 }
                 console.log(`${key} : ${v}`);

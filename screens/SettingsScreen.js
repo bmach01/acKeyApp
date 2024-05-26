@@ -8,7 +8,7 @@ import {
 import NumericInput from 'react-native-numeric-input';
 import Storage from '../model/Storage';
 
-const SettingsScreen = () => {
+const SettingsScreen = ({navigation}) => {
 
   const storage = Storage.getInstance();
   const initValue = parseInt(storage.getSetting(Storage.keys.LIMIT)) / 60 / 1000;

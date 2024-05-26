@@ -39,7 +39,6 @@ export async function sendLogout(login, password, imei) {
       }
     });
 
-    console.log(response.ok)
     return response.ok;
   } catch (error) {
     console.log(`sendLogout: ${error}`);
