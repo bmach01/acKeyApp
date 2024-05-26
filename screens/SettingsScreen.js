@@ -4,11 +4,11 @@ import {
   View,
   SafeAreaView,
   StyleSheet,
-} from "react-native"
+} from 'react-native'
 import NumericInput from 'react-native-numeric-input';
-import Storage from "../model/Storage";
+import Storage from '../model/Storage';
 
-function SettingsScreen() {
+const SettingsScreen = () => {
 
   const storage = Storage.getInstance();
   const initValue = parseInt(storage.getSetting(Storage.keys.LIMIT)) / 60 / 1000;
@@ -49,9 +49,9 @@ function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     marginTop: 50,
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
-    padding: "5%",
+    padding: '5%',
   },
   settings: {
     container: {

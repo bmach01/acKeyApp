@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
     Text,
     View,
@@ -6,22 +6,23 @@ import {
     StyleSheet,
     TouchableOpacity
 } from 'react-native'
-import Barcode from "react-native-barcode-builder";
-import { sendLogout } from "../model/Connections";
-import Storage from "../model/Storage";
+import Barcode from 'react-native-barcode-builder';
+import { sendLogout } from '../model/Connections';
+import Storage from '../model/Storage';
 
-function KeyScreen({navigation}) {
+const KeyScreen = ({navigation}) => {
     
     const storage = Storage.getInstance();
-    const key = storage.getSetting(Storage.keys.KEY);
+    // for debug
+    const key = storage.getSetting(Storage.keys.KEY) === '' ? 'DUMMY_KEY_DUMMY_KEY_DUMMY_KEY' : storage.getSetting(Storage.keys.KEY);
 
     const logout = async () => {
 
         // !!!DEBUG ONLY!!!
         if (!storage.login && !storage.password) {
-            console.log("DEBUG LOGOUT");
+            console.log('DEBUG LOGOUT');
             storage.saveSetting(Storage.keys.SESSION, 0);
-            navigation.navigate("LoginScreen");
+            navigation.navigate('LoginScreen');
             return;
         }
 
@@ -31,11 +32,11 @@ function KeyScreen({navigation}) {
 
             if (success) {
                 storage.saveSetting(Storage.keys.SESSION, 0);
-                storage.saveSetting(Storage.keys.KEY, "");
-                navigation.navigate("LoginScreen");
+                storage.saveSetting(Storage.keys.KEY, '');
+                navigation.navigate('LoginScreen');
             }
             else {
-                console.log("logout failed!");
+                console.log('logout failed!');
             }
         }
         catch(error) {
@@ -54,7 +55,7 @@ function KeyScreen({navigation}) {
                 <Text style={styles.barcode.figure}>
                     <Barcode 
                     value={key}
-                    format="CODE128" 
+                    format='CODE128' 
                     width={0.912}
                     height={150}
                     />

@@ -3,40 +3,19 @@ import { Text, TextInput, SafeAreaView, StyleSheet, View, Pressable, ActivityInd
 import { sendLogin } from '../model/Connections'
 import * as COLORS from '../assets/colors'
 import Storage from '../model/Storage';
-import { getUniqueId } from "react-native-device-info";
 
 
-function LoginScreen({ navigation }) {
-    const [login, setLogin] = useState("");
-    const [password, setPassword] = useState("");
-
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const load = async () => {
-            const storage = Storage.getInstance();
-            try {
-                await storage.init();
-                storage.imei = (await getUniqueId()).toString();
-            }
-            catch(error) {
-                console.log("loginscreen load error:", error);
-            }
-            finally {
-                setLoading(false);
-            }
-        }
-    
-        load();
-    }, []);
+const LoginScreen = ({ navigation }) => {
+    const [login, setLogin] = useState('');
+    const [password, setPassword] = useState('');
   
     const handleLogin = async () => {
         const storage = Storage.getInstance();
 
         // !!!DEBUG ONLY!!!
         if (!login && !password) {
-            console.log("DEBUG LOGIN");
-            navigation.navigate('KeyScreen', {key: null});
+            console.log('DEBUG LOGIN');
+            navigation.navigate('KeyScreen');
             return;
         }
 
@@ -51,7 +30,7 @@ function LoginScreen({ navigation }) {
                 await storage.saveSetting(Storage.keys.KEY, key);
                 storage.login = login;
                 storage.password = password;
-                navigation.navigate('KeyScreen', {key: key});
+                navigation.navigate('KeyScreen');
             }
             else {
                 // TODO: handle wrong credentials here
@@ -64,10 +43,6 @@ function LoginScreen({ navigation }) {
         
     }
 
-    if (loading) {
-      return <ActivityIndicator size="large" color="#0000ff" />;
-    }
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.credentials.container}>
@@ -75,14 +50,14 @@ function LoginScreen({ navigation }) {
                     style={styles.credentials.input}
                     onChangeText={t => setLogin(t)}
                     value={login}
-                    placeholder="Login"
+                    placeholder='Login'
                 />
                 <TextInput
                     style={styles.credentials.input}
                     onChangeText={t => setPassword(t)}
                     value={password}
-                    placeholder="Password"
-                    keyboardType="numeric"
+                    placeholder='Password'
+                    keyboardType='numeric'
                     secureTextEntry
                 />
                 <Pressable 
@@ -115,15 +90,15 @@ const styles = StyleSheet.create({
             borderWidth: 1,
             padding: 10,
             borderRadius: 100,
-            color: "black"
+            color: 'black'
         }
     },
     buttons:{
         login:{
-            alignItems:"center",
-            justifyContent:"center",
+            alignItems:'center',
+            justifyContent:'center',
             backgroundColor: COLORS.BUTTONS_COLOR,
-            color: "black"
+            color: 'black'
         }
     },
 });
