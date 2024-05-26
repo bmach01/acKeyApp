@@ -1,26 +1,20 @@
-import React from "react"
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   View,
   SafeAreaView,
   StyleSheet,
-  TouchableOpacity,
 } from "react-native"
 import NumericInput from 'react-native-numeric-input';
-import * as KEYS from '../../assets/storageKeys';
-import Storage from '../../model/Storage';
+import { storage } from "../model/Storage";
 
 function SettingsScreen() {
-  const storage = new Storage();
-  let initV = parseInt(storage.getSetting(KEYS.SESSION_LIMIT));
-  let save;
 
-  const handleIncrement = (v) => {
-    clearTimeout(save);
-    save = setTimeout(() => {
-      storage.saveSettings(KEYS.SESSION_LIMIT, v.toString());
-    }, 500);
+  const onChangeLimit = async (v) => {
+    storage.settings.limit = v * 60 * 1000;
+    storage.saveSettings()
   }
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,11 +23,11 @@ function SettingsScreen() {
           <Text style={styles.settings.section.title}>Session limit</Text>
           <NumericInput 
             valueType='integer'
-            initValue={initV}
+            initValue={storage.settings.limit / 60 / 1000}
             onChange={
               value => {
                 console.log(value)
-                handleIncrement(value)
+                onChangeLimit(value)
               }
             }
             minValue={5}

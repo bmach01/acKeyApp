@@ -1,35 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import {
     Text,
     TextInput,
     SafeAreaView,
     StyleSheet,
     View,
-    Pressable
+    Pressable,
+    ActivityIndicator, 
+    Settings
 } from 'react-native'
-import { sendLogin } from '../../model/Connections'
-import * as COLORS from '../../assets/colors'
-import * as KEYS from '../../assets/storageKeys'
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { sendLogin } from '../model/Connections'
+import * as COLORS from '../assets/colors'
+import { storage } from "../model/Storage";
+import { getUniqueId } from "react-native-device-info";
 
-function LoginScreen() {
+
+function LoginScreen({ navigation }) {
     const [login, setLogin] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const navigation = useNavigation();
 
-    async function attemptLogin() {
-        try {
-            // DEBUG ONLY!!!
-            if (!login && !password) {
-                console.log("debug login");
-                navigation.navigate('KeyScreen', {key: null});
-                return;
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const load = async () => {
+            try {
+                storage.imei = (await getUniqueId()).toString();
+                storage.loadSettings();
             }
-            const key = await sendLogin(login, password);
+            catch(error) {
+                console.log("loginscreen load error:", error);
+            }
+            finally {
+                setLoading(false);
+            }
+        }
+        load();
+    }, []);
+  
 
+    handleLogin = async () => {
+
+        // !!!DEBUG ONLY!!!
+        if (!login && !password) {
+            console.log("DEBUG LOGIN");
+            navigation.navigate('KeyScreen', {key: null});
+            return;
+        }
+
+        try {
+            storage.settings.session = Date.now() + storage.settings.limit;
+            const key = await sendLogin(login, password, storage.imei, storage.settings.session);
+
+            // Success
             if (key != null) {
-                AsyncStorage.setItem(KEYS.LAST_LOGIN_STAMP, Date.now().toString());
+                storage.settings.key = key;
+                storage.login = login;
+                storage.password = password;
+                storage.saveSettings();
                 navigation.navigate('KeyScreen', {key: key});
             }
             else {
@@ -41,6 +68,10 @@ function LoginScreen() {
             // TODO: handle unable to connect to the server
         }
         
+    }
+
+    if (loading) {
+      return <ActivityIndicator size="large" color="#0000ff" />;
     }
 
     return (
@@ -64,7 +95,7 @@ function LoginScreen() {
                 />
                 <Pressable 
                     style={[styles.credentials.input, styles.buttons.login]}
-                    onPress={attemptLogin}
+                    onPress={handleLogin}
                 >
                     <Text >Login</Text>
                 </Pressable>

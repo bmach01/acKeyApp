@@ -7,24 +7,46 @@ import {
     TouchableOpacity
 } from 'react-native'
 import Barcode from "react-native-barcode-builder";
-import { useNavigation } from '@react-navigation/native';
+import { sendLogout } from "../model/Connections";
+import { storage } from "../model/Storage";
 
-
-function KeyScreen(props) {
+function KeyScreen({navigation}) {
     
-    let key = !props.route.params.key ? 'DUMMYKEY_DUMMYKEY_DUMMYKEY_DUMMY' : props.route.params.key;
-    const navigation = useNavigation();
+    const key = storage.settings.key;
 
-    const logout = () => {
+    const logout = async () => {
 
-        console.log("logout");
-        navigation.navigate('LoginScreen');
+        // !!!DEBUG ONLY!!!
+        if (!storage.login && !storage.password) {
+            console.log("DEBUG LOGOUT");
+            storage.settings.session = 0;
+            storage.saveSettings();
+            navigation.navigate("LoginScreen");
+            return;
+        }
+
+
+        try {
+            const success = await sendLogout(storage.login, storage.password, storage.imei);
+
+            if (success) {
+                storage.settings.session = 0;
+                storage.saveSettings();
+        
+                navigation.navigate("LoginScreen");
+            }
+            else {
+                console.log("logout failed!");
+            }
+        }
+        catch(error) {
+            console.log(`logout error: ${error}`);
+        }
+
     }
 
     const goToSettings = () => {
-
-        console.log("go to settings");
-        navigation.navigate('SettingsScreen')
+        navigation.navigate('SettingsScreen');
     }
 
     return (
@@ -61,6 +83,9 @@ const styles = StyleSheet.create({
   
     barcode: {
       container: {
+        width: '100%',
+        flex: 1,
+        alignItems: 'center'
       },
       figure: {
 

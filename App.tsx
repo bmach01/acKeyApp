@@ -1,19 +1,13 @@
 import React from 'react'
-import KeyScreen from './screens/KeyScreen/KeyScreen';
-import LoginScreen from './screens/LoginScreen/LoginScreen';
+import KeyScreen from './screens/KeyScreen';
+import LoginScreen from './screens/LoginScreen';
+import SettingsScreen from './screens/SettingsScreen';
 import { NavigationContainer } from '@react-navigation/native'
-import SettingsScreen from './screens/SettingsScreen/SettingsScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Storage from './model/Storage';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
-  let dummyKey = 'mNvoeJKrQylpHcFGxbtqauPZSsdRwUOimNvoeJKrQylpHcFGxbtqauPZSsdRwUOi';
-
-  const storage = new Storage();
-  storage.loadAllSettings();
-
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="LoginScreen">

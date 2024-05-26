@@ -1,60 +1,67 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as KEYS from '../assets/storageKeys';
 
-var instance;
+export const storage = {
+    // Temporary
+    login: "",
+    password: "",
+    imei: "",
 
-class Storage {
-    #values = new Map([
-        [KEYS.SESSION_LIMIT, ""],
-        [KEYS.LAST_LOGIN_STAMP, ""],
-        [KEYS.CURRENT_KEY, ""]
-    ]);
+    // Persistent
+    settings: {
+        session: 0,
+        limit: 5 * 60 * 1000,
+        key: "DUMMY_KEY_DUMMY_KEY_DUMMY_KEY"
+    },
 
-    constructor() {
-        if (!instance) {
-            instance = this;
-        }
-        return instance;
-    }
-
-    loadAllSettings = async () => {
+    saveSettings: async () => {
         try {
-            this.#values.set(KEYS.SESSION_LIMIT,  parseInt(await AsyncStorage.getItem(KEYS.SESSION_LIMIT)));
+            await AsyncStorage.setItem("@session", storage.settings.session.toString());
         }
-        catch(error) {
-            this.#values.set(KEYS.SESSION_LIMIT, 5);
+        catch (error) {
+            console.log("saveSettings error: ", error);
         }
 
         try {
-            this.#values.set(KEYS.LAST_LOGIN_STAMP, parseInt(await AsyncStorage.getItem(KEYS.LAST_LOGIN_STAMP)));
+            await AsyncStorage.setItem("@limit", storage.settings.limit.toString());
         }
-        catch(error) {
-            this.#values.set(KEYS.SESSION_LIMIT,  parseInt(Date.now()));
+        catch (error) {
+            console.log("saveSettings error: ", error);
         }
 
         try {
-            this.#values.set(KEYS.CURRENT_KEY, await AsyncStorage.getItem(KEYS.CURRENT_KEY));
+            await AsyncStorage.setItem("@key", storage.settings.key.toString());
         }
-        catch(error) {
-            this.#values.set(KEYS.SESSION_LIMIT, null);
+        catch (error) {
+            console.log("saveSettings error: ", error);
+        }
+    },
+
+    loadSettings: async () => {
+        try {
+            const value = parseInt(await AsyncStorage.getItem("@session"));
+            if (!isNaN(value)) {
+                storage.settings.session = value;
+            }
+        } catch (error) {
+            console.log("loadSettings error (session): ", error);
+        }
+
+        try {
+            const value = parseInt(await AsyncStorage.getItem("@limit"));
+            if (!isNaN(value)) {
+                storage.settings.limit = value;
+            }
+        } catch (error) {
+            console.log("loadSettings error (limit): ", error);
+        }
+
+        try {
+            const value = parseInt(await AsyncStorage.getItem("@key"));
+            if (!isNaN(value)) {
+                storage.settings.key = value;
+            }
+        } catch (error) {
+            console.log("loadSettings error (limit): ", error);
         }
     }
-
-    saveSettings = (key, value) => {
-        if (!this.#values.has(key))
-            throw new Error("Invalid key");
-        
-        AsyncStorage.setItem(key, value)
-        .then(() => {this.#values.set(key, value);})
-        .catch(error => console.log(error));
-    }
-
-    getSetting = (key) => {
-        if (!this.#values.has(key))
-            throw new Error("Invalid key");
-        return this.#values.get(key);
-    }
-
 }
-
-export default Storage;
