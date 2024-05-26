@@ -8,19 +8,19 @@ import {
 } from 'react-native'
 import Barcode from "react-native-barcode-builder";
 import { sendLogout } from "../model/Connections";
-import { storage } from "../model/Storage";
+import Storage from "../model/Storage";
 
 function KeyScreen({navigation}) {
     
-    const key = storage.settings.key;
+    const storage = Storage.getInstance();
+    const key = storage.getSetting(Storage.keys.KEY);
 
     const logout = async () => {
 
         // !!!DEBUG ONLY!!!
         if (!storage.login && !storage.password) {
             console.log("DEBUG LOGOUT");
-            storage.settings.session = 0;
-            storage.saveSettings();
+            storage.saveSetting(Storage.keys.SESSION, 0);
             navigation.navigate("LoginScreen");
             return;
         }
@@ -30,9 +30,8 @@ function KeyScreen({navigation}) {
             const success = await sendLogout(storage.login, storage.password, storage.imei);
 
             if (success) {
-                storage.settings.session = 0;
-                storage.saveSettings();
-        
+                storage.saveSetting(Storage.keys.SESSION, 0);
+                storage.saveSetting(Storage.keys.KEY, "");
                 navigation.navigate("LoginScreen");
             }
             else {

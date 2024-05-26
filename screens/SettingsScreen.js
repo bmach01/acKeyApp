@@ -6,13 +6,16 @@ import {
   StyleSheet,
 } from "react-native"
 import NumericInput from 'react-native-numeric-input';
-import { storage } from "../model/Storage";
+import Storage from "../model/Storage";
 
 function SettingsScreen() {
 
+  const storage = Storage.getInstance();
+  const initValue = parseInt(storage.getSetting(Storage.keys.LIMIT)) / 60 / 1000;
+
+
   const onChangeLimit = async (v) => {
-    storage.settings.limit = v * 60 * 1000;
-    storage.saveSettings()
+    await storage.saveSetting(Storage.keys.LIMIT, v * 60 * 1000);
   }
 
 
@@ -23,17 +26,19 @@ function SettingsScreen() {
           <Text style={styles.settings.section.title}>Session limit</Text>
           <NumericInput 
             valueType='integer'
-            initValue={storage.settings.limit / 60 / 1000}
+            initValue={initValue}
             onChange={
               value => {
-                console.log(value)
-                onChangeLimit(value)
+                onChangeLimit(value);
               }
             }
             minValue={5}
             maxValue={60}
             step={5}
             rounded
+            iconStyle={{ color: 'white' }} 
+            rightButtonBackgroundColor='#EA3788' 
+            leftButtonBackgroundColor='#E56B70'
           />
         </View>
       </View>

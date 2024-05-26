@@ -1,67 +1,75 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const storage = {
-    // Temporary
-    login: "",
-    password: "",
-    imei: "",
+export default class Storage {
+    static keys = {
+        KEY: "@key",
+        LIMIT: "@limit",
+        SESSION: "@session"
+    };
 
-    // Persistent
-    settings: {
-        session: 0,
-        limit: 5 * 60 * 1000,
-        key: "DUMMY_KEY_DUMMY_KEY_DUMMY_KEY"
-    },
+    static #instance = null;
+    static #initialized = false;
 
-    saveSettings: async () => {
-        try {
-            await AsyncStorage.setItem("@session", storage.settings.session.toString());
-        }
-        catch (error) {
-            console.log("saveSettings error: ", error);
-        }
+    // Session bound (temporary)
+    login = "";
+    password = "";
+    imei = "";
 
-        try {
-            await AsyncStorage.setItem("@limit", storage.settings.limit.toString());
-        }
-        catch (error) {
-            console.log("saveSettings error: ", error);
-        }
+    #persistent = new Map([
+        [Storage.keys.KEY, "DUMMY_KEY_DUMMY_KEY_DUMMY_KEY"],
+        [Storage.keys.LIMIT, 5* 60 * 1000],
+        [Storage.keys.SESSION, 0]
+    ]);
 
-        try {
-            await AsyncStorage.setItem("@key", storage.settings.key.toString());
-        }
-        catch (error) {
-            console.log("saveSettings error: ", error);
-        }
-    },
 
-    loadSettings: async () => {
-        try {
-            const value = parseInt(await AsyncStorage.getItem("@session"));
-            if (!isNaN(value)) {
-                storage.settings.session = value;
+    static getInstance = () => {
+        if (!this.instance) {
+            this.instance = new Storage();
+        }
+        return this.instance;
+    }
+
+    init = async () => {
+        if (Storage.#initialized) return;
+        this.#loadPersisted();
+        Storage.#initialized = true;
+    }
+
+    saveSetting = async(key, value) => {
+        if (this.#persistent.has(key)) {
+            this.#persistent.set(key, value);
+            try {
+                await AsyncStorage.setItem(key, value.toString());
             }
-        } catch (error) {
-            console.log("loadSettings error (session): ", error);
-        }
-
-        try {
-            const value = parseInt(await AsyncStorage.getItem("@limit"));
-            if (!isNaN(value)) {
-                storage.settings.limit = value;
+            catch (error) {
+                console.log("saveSettings error: ", error);
             }
-        } catch (error) {
-            console.log("loadSettings error (limit): ", error);
         }
+        else {
+            throw new Error("Unknown key");
+        }
+    };
 
-        try {
-            const value = parseInt(await AsyncStorage.getItem("@key"));
-            if (!isNaN(value)) {
-                storage.settings.key = value;
-            }
-        } catch (error) {
-            console.log("loadSettings error (limit): ", error);
+    getSetting = (key) => {
+        if (this.#persistent.has(key)) {
+            return this.#persistent.get(key);
         }
+        else {
+            throw new Error("Unknown key");
+        }
+    }
+
+    #loadPersisted = async () => {
+        [...this.#persistent.keys()].forEach( async (key) => {
+            try {
+                const v = await AsyncStorage.getItem(key);
+                if (typeof v !== 'undefined' && v !== "") {
+                    this.#persistent.set(key, v);
+                }
+            }
+            catch (error) {
+                console.log(`Storage.loadPersisted error: ${error}`)
+            }
+        });
     }
 }

@@ -1,31 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Text,
-    TextInput,
-    SafeAreaView,
-    StyleSheet,
-    View,
-    Pressable,
-    ActivityIndicator, 
-    Settings
-} from 'react-native'
+import { Text, TextInput, SafeAreaView, StyleSheet, View, Pressable, ActivityIndicator } from 'react-native'
 import { sendLogin } from '../model/Connections'
 import * as COLORS from '../assets/colors'
-import { storage } from "../model/Storage";
+import Storage from '../model/Storage';
 import { getUniqueId } from "react-native-device-info";
 
 
 function LoginScreen({ navigation }) {
-    const [login, setLogin] = React.useState("");
-    const [password, setPassword] = React.useState("");
+    const [login, setLogin] = useState("");
+    const [password, setPassword] = useState("");
 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const load = async () => {
+            const storage = Storage.getInstance();
             try {
+                await storage.init();
                 storage.imei = (await getUniqueId()).toString();
-                storage.loadSettings();
             }
             catch(error) {
                 console.log("loginscreen load error:", error);
@@ -34,11 +26,12 @@ function LoginScreen({ navigation }) {
                 setLoading(false);
             }
         }
+    
         load();
     }, []);
   
-
-    handleLogin = async () => {
+    const handleLogin = async () => {
+        const storage = Storage.getInstance();
 
         // !!!DEBUG ONLY!!!
         if (!login && !password) {
@@ -48,15 +41,16 @@ function LoginScreen({ navigation }) {
         }
 
         try {
-            storage.settings.session = Date.now() + storage.settings.limit;
-            const key = await sendLogin(login, password, storage.imei, storage.settings.session);
+            const newSession = Date.now() + parseInt(storage.getSetting(Storage.keys.LIMIT));
+            await storage.saveSetting(Storage.keys.SESSION, newSession);
+
+            const key = await sendLogin(login, password, storage.imei, newSession);
 
             // Success
             if (key != null) {
-                storage.settings.key = key;
+                await storage.saveSetting(Storage.keys.KEY, key);
                 storage.login = login;
                 storage.password = password;
-                storage.saveSettings();
                 navigation.navigate('KeyScreen', {key: key});
             }
             else {
@@ -81,7 +75,6 @@ function LoginScreen({ navigation }) {
                     style={styles.credentials.input}
                     onChangeText={t => setLogin(t)}
                     value={login}
-                    
                     placeholder="Login"
                 />
                 <TextInput
@@ -90,14 +83,13 @@ function LoginScreen({ navigation }) {
                     value={password}
                     placeholder="Password"
                     keyboardType="numeric"
-                    // editable={false}
                     secureTextEntry
                 />
                 <Pressable 
                     style={[styles.credentials.input, styles.buttons.login]}
                     onPress={handleLogin}
                 >
-                    <Text >Login</Text>
+                    <Text>Login</Text>
                 </Pressable>
             </View>
         </SafeAreaView>
@@ -107,7 +99,7 @@ function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
     container: {
       alignItems: 'center',
-      flex:1,
+      flex: 1,
       padding: '5%',
     },
   
@@ -118,14 +110,13 @@ const styles = StyleSheet.create({
             margin: 100,
         },
         input: {
-            
             height: 50,
             margin: 10,
             borderWidth: 1,
             padding: 10,
             borderRadius: 100,
             color: "black"
-    }
+        }
     },
     buttons:{
         login:{
@@ -135,7 +126,6 @@ const styles = StyleSheet.create({
             color: "black"
         }
     },
-  });
-  
+});
 
 export default LoginScreen;
