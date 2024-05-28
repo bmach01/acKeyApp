@@ -1,50 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Text,
-  View,
-  SafeAreaView,
-  StyleSheet,
-} from 'react-native'
+import React, {useEffect, useState} from 'react';
+import {Text, View, SafeAreaView, StyleSheet} from 'react-native';
 import NumericInput from 'react-native-numeric-input';
 import Storage from '../model/Storage';
+import * as COLORS from '../assets/colors';
 
 const SettingsScreen = ({navigation}) => {
-
   const storage = Storage.getInstance();
-  const initValue = parseInt(storage.getSetting(Storage.keys.LIMIT)) / 60 / 1000;
+  const initValue =
+    parseInt(storage.getSetting(Storage.keys.LIMIT)) / 60 / 1000;
 
-
-  const onChangeLimit = async (v) => {
+  const onChangeLimit = async v => {
     await storage.saveSetting(Storage.keys.LIMIT, v * 60 * 1000);
-  }
-
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.settings.container}>
         <View style={styles.settings.section}>
           <Text style={styles.settings.section.title}>Session limit</Text>
-          <NumericInput 
-            valueType='integer'
+          <NumericInput
+            valueType="integer"
             initValue={initValue}
-            onChange={
-              value => {
-                onChangeLimit(value);
-              }
-            }
+            onChange={value => {
+              onChangeLimit(value);
+            }}
             minValue={5}
             maxValue={60}
             step={5}
             rounded
-            iconStyle={{ color: 'white' }} 
-            rightButtonBackgroundColor='#EA3788' 
-            leftButtonBackgroundColor='#E56B70'
+            iconStyle={{color: 'white'}}
+            rightButtonBackgroundColor={COLORS.BUTTONS_COLOR}
+            leftButtonBackgroundColor={COLORS.BUTTONS_COLOR}
           />
         </View>
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -52,6 +44,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     padding: '5%',
+    color: 'black',
   },
   settings: {
     container: {
@@ -68,9 +61,10 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         fontSize: 25,
         marginEnd: 10,
+        color: 'black',
       },
     },
   },
 });
 
-export default SettingsScreen
+export default SettingsScreen;
