@@ -1,43 +1,18 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import KeyScreen from './screens/KeyScreen';
 import LoginScreen from './screens/LoginScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {getUniqueId} from 'react-native-device-info';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { getUniqueId } from 'react-native-device-info';
 import Storage from './model/Storage';
-import {Text, View, ActivityIndicator} from 'react-native';
-import {AppState, StyleSheet} from 'react-native';
-import {enableScreens} from 'react-native-screens';
+import { Text, View, ActivityIndicator } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
+  const [initialScreen, setInitialScreen] = useState('LoginScreen');
   const [loading, setLoading] = useState(true);
-  const [appState, setAppState] = useState(AppState.currentState);
-  const [showWhiteScreen, setShowWhiteScreen] = useState(false);
-
-  useEffect(() => {
-    const handleAppStateChange = nextAppState => {
-      if (appState.match(/inactive|background/) && nextAppState === 'active') {
-        // The app has come to the foreground
-        setShowWhiteScreen(false);
-      } else if (nextAppState.match(/inactive|background/)) {
-        // The app is going to the background
-        setShowWhiteScreen(true);
-      }
-      setAppState(nextAppState);
-    };
-
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange,
-    );
-
-    return () => {
-      subscription.remove();
-    };
-  }, [appState]);
 
   useEffect(() => {
     const load = async () => {
@@ -66,8 +41,8 @@ function App() {
 
   if (loading) {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size='large' color='#0000ff' />
         <Text>Loading...</Text>
       </View>
     );
@@ -75,32 +50,13 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName={showWhiteScreen ? SettingsScreen : LoginScreen}>
-        <Stack.Screen
-          name="LoginScreen"
-          options={{headerBackVisible: false}}
-          component={showWhiteScreen ? SettingsScreen : LoginScreen}
-        />
-        <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
-        <Stack.Screen
-          name="KeyScreen"
-          options={{headerBackVisible: false}}
-          component={KeyScreen}
-        />
+      <Stack.Navigator initialRouteName={initialScreen}>
+        <Stack.Screen name='LoginScreen' options={{ headerBackVisible: false }} component={LoginScreen} />
+        <Stack.Screen name='SettingsScreen' component={SettingsScreen} />
+        <Stack.Screen name='KeyScreen' options={{ headerBackVisible: false }} component={KeyScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-const styles = StyleSheet.create({
-  whiteScreen: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'white',
-  },
-});
 
 export default App;
